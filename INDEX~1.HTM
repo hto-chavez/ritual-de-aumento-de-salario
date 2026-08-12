@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ritual de Aumento de Salario — 2° Grado</title>
+<meta name="theme-color" content="#123423">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{
+  --navy:#123423; --navy2:#1c4a30; --gold:#c6a15b; --gold-soft:#e8d9b8;
+  --paper:#f6f8f2; --ink:#1c2a1e;
+  --accion-bg:#16301f; --accion-bg2:#1c4a30; --accion-border:#c6a15b; --accion-ink:#eef3ea;
+  --accion-red:#c0473a;
+  --highlight:#ffe066; --highlight-border:#c9a400;
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:Georgia,'Times New Roman',serif;background:var(--paper);color:var(--ink);padding-bottom:60px;}
+header.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:50;background:var(--navy);color:var(--gold-soft);
+  transition:transform .28s ease;box-shadow:0 2px 10px rgba(0,0,0,.25);
+}
+header.topbar.hidden{transform:translateY(-100%);}
+.topbar-inner{padding:8px 10px 6px;}
+.topbar-title{font-size:13px;letter-spacing:.06em;opacity:.85;margin-bottom:6px;text-align:center;font-family:Georgia,serif;}
+.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding-bottom:6px;}
+.chip{
+  font-family:Arial,Helvetica,sans-serif;font-size:12.5px;padding:6px 10px;border-radius:16px;
+  border:1px solid var(--gold);background:transparent;color:var(--gold-soft);cursor:pointer;user-select:none;
+}
+.chip.active{background:var(--gold);color:var(--navy);font-weight:bold;}
+.progress-wrap{
+  position:fixed;top:0;left:0;right:0;z-index:60;height:26px;background:var(--navy2);
+  display:flex;align-items:center;padding:0 8px;transition:top .28s ease;
+}
+.progress-track{flex:1;height:5px;background:rgba(255,255,255,.15);border-radius:3px;margin-right:8px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--gold);width:0%;transition:width .2s;}
+.progress-label{font-family:Arial,sans-serif;font-size:10.5px;color:var(--gold-soft);white-space:nowrap;max-width:55%;overflow:hidden;text-overflow:ellipsis;}
+.progress-pct{font-family:Arial,sans-serif;font-size:10.5px;color:var(--gold);margin-left:6px;}
+
+main{max-width:760px;margin:0 auto;padding:80px 14px 40px;}
+
+.setup-panel{
+  background:var(--navy);color:var(--gold-soft);border-radius:10px;padding:18px;margin-bottom:22px;
+}
+.setup-panel h2{margin-top:0;font-size:19px;color:var(--gold);}
+.setup-panel p{font-size:13.5px;line-height:1.5;font-family:Arial,sans-serif;opacity:.9;}
+.setup-panel input[type=text]{
+  width:100%;padding:8px 10px;border-radius:6px;border:1px solid var(--gold);background:#fff;color:#20223a;
+  font-family:Arial,sans-serif;font-size:14px;margin-bottom:8px;
+}
+.cand-row{display:flex;gap:6px;margin-bottom:6px;}
+.cand-row input{flex:1;}
+.btn{
+  font-family:Arial,sans-serif;background:var(--gold);color:var(--navy);border:none;border-radius:6px;
+  padding:8px 14px;font-weight:bold;cursor:pointer;font-size:13.5px;
+}
+.btn.secondary{background:transparent;color:var(--gold-soft);border:1px solid var(--gold);}
+.setup-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+
+.phase-heading{
+  font-size:16px;color:var(--navy);font-weight:bold;border-bottom:2px solid var(--gold);
+  padding-bottom:4px;margin:34px 0 14px;letter-spacing:.02em;
+}
+.phase-heading small{display:block;font-family:Arial,sans-serif;font-weight:normal;font-size:11.5px;color:#666;margin-top:2px;}
+
+.entry{margin-bottom:12px;padding:10px 12px;border-radius:8px;line-height:1.55;font-size:15.5px;}
+.entry.dialogo{background:#fff;border:1px solid #d8e2d5;}
+.entry.accion{
+  background:var(--accion-bg);
+  border:1px solid var(--accion-border);border-left:4px solid var(--gold);
+  font-style:italic;font-size:14px;color:var(--accion-ink);
+}
+.entry.highlight{background:var(--highlight)!important;border:1.5px solid var(--highlight-border)!important;border-left:1.5px solid var(--highlight-border)!important;color:var(--ink)!important;}
+.entry .speaker{
+  font-family:Arial,sans-serif;font-weight:bold;font-size:12.5px;text-transform:uppercase;
+  letter-spacing:.04em;color:var(--navy);display:block;margin-bottom:3px;
+}
+.entry.accion .speaker{color:var(--gold);}
+.loc-tag{
+  display:inline-block;font-family:Arial,sans-serif;font-size:11.5px;background:#fff;border:1px solid var(--gold);
+  color:#7a5a10;padding:1px 7px;border-radius:10px;margin-bottom:5px;
+}
+.entry.accion .loc-tag{background:rgba(255,255,255,.08);color:var(--gold-soft);border-color:var(--gold);}
+.loc-tag.inferred::after{content:" (inferido)";opacity:.65;font-style:italic;}
+.loc-tag.inferred{border-color:var(--accion-red);color:var(--accion-red);}
+.entry.accion .loc-tag.inferred{color:#ffb3a3;border-color:var(--accion-red);}
+
+.all-caps{font-weight:bold;}
+footer.credit{max-width:760px;margin:20px auto 0;padding:0 14px;font-family:Arial,sans-serif;font-size:11px;color:#888;text-align:center;}
+.chip-todos{border-color:#888;color:#ddd;}
+.alt-active{font-weight:bold;color:var(--navy);}
+.alt-dim{opacity:.4;text-decoration:line-through;text-decoration-color:#999;}
+</style>
+</head>
+<body>
+
+<header class="topbar" id="topbar">
+  <div class="topbar-inner">
+    <div class="topbar-title">Selecciona tu(s) puesto(s) para resaltar tus intervenciones</div>
+    <div class="chips" id="chips"></div>
+  </div>
+</header>
+<div class="progress-wrap" id="progressWrap">
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-label" id="progressLabel">Inicio</div>
+  <div class="progress-pct" id="progressPct">0%</div>
+</div>
+
+<main>
+  <div class="setup-panel" id="setupPanel">
+    <h2>Ritual de Aumento de Salario — Paso al 2° Grado (Compañero)</h2>
+    <p>R∴L∴S∴ Hermes N.° 49. Captura el/los nombre(s) del/de los Aprendiz(ces) que ascienden a Compañero. El texto insertará el o los nombres donde el guión los menciona.</p>
+    <div id="candList"></div>
+    <div class="setup-actions">
+      <button class="btn secondary" id="addCand" type="button">+ Agregar candidato</button>
+      <button class="btn" id="startBtn" type="button">Comenzar el ritual</button>
+    </div>
+  </div>
+
+  <div id="ritualContainer"></div>
+
+  <footer class="credit">Uso interno — R∴L∴S∴ Hermes N.° 49. Texto literal según la Liturgia del Segundo Grado observada por la corporación.</footer>
+</main>
+
+<script src="data.js"></script>
+<script>
+/* ---------- Estado ---------- */
+let candidatos = [];
+const ROLES = [
+  {code:'VM', label:'Muy Ven∴ Maest∴'},
+  {code:'P1V', label:'Primer Vigilante'},
+  {code:'P2V', label:'Segundo Vigilante'},
+  {code:'GT', label:'Guarda Templo'},
+  {code:'EXP', label:'Experto(s)'},
+  {code:'MC', label:'Maestro de Ceremonias'},
+  {code:'OR', label:'Orador'},
+  {code:'PTE', label:'Presidente de Comisión'},
+  {code:'CAND', label:'Candidato(s)'},
+  {code:'TODOS', label:'Todos los HH∴'}
+];
+let activeRoles = new Set();
+
+/* ---------- Setup panel: candidatos ---------- */
+function renderCandList(){
+  const wrap = document.getElementById('candList');
+  wrap.innerHTML = '';
+  if(candidatos.length===0) candidatos=[''];
+  candidatos.forEach((v,i)=>{
+    const row = document.createElement('div');
+    row.className='cand-row';
+    row.innerHTML = `<input type="text" placeholder="Nombre del candidato ${i+1}" value="${v.replace(/"/g,'&quot;')}" data-idx="${i}">`;
+    if(candidatos.length>1){
+      const rm = document.createElement('button');
+      rm.className='btn secondary'; rm.type='button'; rm.textContent='✕';
+      rm.onclick=()=>{candidatos.splice(i,1); renderCandList();};
+      row.appendChild(rm);
+    }
+    wrap.appendChild(row);
+  });
+  wrap.querySelectorAll('input').forEach(inp=>{
+    inp.addEventListener('input', e=>{
+      candidatos[+e.target.dataset.idx] = e.target.value;
+    });
+  });
+}
+document.getElementById('addCand').addEventListener('click', ()=>{
+  candidatos.push(''); renderCandList();
+});
+document.getElementById('startBtn').addEventListener('click', ()=>{
+  candidatos = candidatos.map(c=>c.trim()).filter(c=>c.length>0);
+  if(candidatos.length===0) candidatos=['(candidato sin nombre)'];
+  document.getElementById('setupPanel').style.display='none';
+  buildRitual();
+  window.scrollTo({top:0});
+});
+renderCandList();
+
+/* ---------- Plantillas de nombres ---------- */
+function nombresTexto(){
+  if(candidatos.length===1) return candidatos[0];
+  if(candidatos.length===2) return candidatos[0]+' y '+candidatos[1];
+  return candidatos.slice(0,-1).join(', ')+' y '+candidatos[candidatos.length-1];
+}
+function tpl(str){
+  str = str.replace(/\{\{NOMBRES\}\}/g, ()=>nombresTexto());
+  str = str.replace(/\{\{S:([^|]*)\|([^}]*)\}\}/g, (m,s,p)=> candidatos.length>1 ? p : s);
+  return str;
+}
+/* Marca de alternancia literal candidato/candidatos ya presente en el texto original */
+function marcaAlt(str){
+  // envuelve "candidato" seguido de "(o candidatos)" con spans que se resaltan según conteo, sin alterar ni una palabra
+  return str.replace(/\b(candidato)(\s*\(o candidatos\))?/gi, (m,a,b)=>{
+    if(!b) return m;
+    const single = candidatos.length<=1;
+    return `<span class="${single?'alt-active':'alt-dim'}">${a}</span><span class="${single?'alt-dim':'alt-active'}">${b}</span>`;
+  });
+}
+
+/* ---------- Construcción del ritual ---------- */
+function buildRitual(){
+  const container = document.getElementById('ritualContainer');
+  container.innerHTML = '';
+  RITUAL.forEach(phase=>{
+    const h = document.createElement('div');
+    h.className='phase-heading';
+    h.id = 'phase-'+phase.id;
+    h.innerHTML = phase.title + (phase.subtitle? `<small>${phase.subtitle}</small>`:'');
+    container.appendChild(h);
+    phase.entries.forEach(entry=>{
+      const div = document.createElement('div');
+      div.className = 'entry ' + entry.type;
+      div.dataset.roles = (entry.roles||[]).join(',');
+      div.dataset.phase = phase.id;
+      let inner = '';
+      if(entry.loc){
+        inner += `<span class="loc-tag ${entry.inferred?'inferred':''}">📍 ${tpl(entry.loc)}</span><br>`;
+      }
+      if(entry.speakerLabel){
+        inner += `<span class="speaker">${entry.speakerLabel}</span>`;
+      }
+      let txt = tpl(entry.text);
+      txt = marcaAlt(txt);
+      inner += txt;
+      div.innerHTML = inner;
+      container.appendChild(div);
+    });
+  });
+  attachScrollObserver();
+  updateHighlights();
+}
+
+/* ---------- Chips de puestos ---------- */
+function renderChips(){
+  const wrap = document.getElementById('chips');
+  wrap.innerHTML='';
+  ROLES.forEach(r=>{
+    const chip = document.createElement('button');
+    chip.className='chip'+(r.code==='TODOS'?' chip-todos':'');
+    chip.textContent = r.label;
+    chip.dataset.code = r.code;
+    chip.addEventListener('click', ()=>{
+      if(activeRoles.has(r.code)) activeRoles.delete(r.code); else activeRoles.add(r.code);
+      chip.classList.toggle('active');
+      updateHighlights();
+    });
+    wrap.appendChild(chip);
+  });
+}
+renderChips();
+
+function updateHighlights(){
+  document.querySelectorAll('.entry').forEach(div=>{
+    const roles = (div.dataset.roles||'').split(',').filter(Boolean);
+    const on = roles.some(r=>activeRoles.has(r));
+    div.classList.toggle('highlight', on);
+  });
+}
+
+/* ---------- Barra superior: ocultar al bajar, mostrar al subir ---------- */
+let lastScroll = 0;
+const topbar = document.getElementById('topbar');
+const progressWrap = document.getElementById('progressWrap');
+window.addEventListener('scroll', ()=>{
+  const cur = window.scrollY;
+  if(cur > lastScroll && cur > 80){
+    topbar.classList.add('hidden');
+    progressWrap.style.top = '0px';
+  } else {
+    topbar.classList.remove('hidden');
+    progressWrap.style.top = topbar.offsetHeight+'px';
+  }
+  lastScroll = cur <= 0 ? 0 : cur;
+  updateProgress();
+}, {passive:true});
+
+function updateProgress(){
+  const doc = document.documentElement;
+  const scrollable = doc.scrollHeight - doc.clientHeight;
+  const pct = scrollable>0 ? Math.min(100, Math.round((window.scrollY/scrollable)*100)) : 0;
+  document.getElementById('progressFill').style.width = pct+'%';
+  document.getElementById('progressPct').textContent = pct+'%';
+}
+
+/* ---------- Fase actual visible (IntersectionObserver) ---------- */
+let currentPhaseTitle = 'Inicio';
+function attachScrollObserver(){
+  const headings = document.querySelectorAll('.phase-heading');
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        currentPhaseTitle = e.target.textContent.replace(/\s+/g,' ').trim();
+        document.getElementById('progressLabel').textContent = currentPhaseTitle;
+      }
+    });
+  }, {rootMargin:'-40% 0px -55% 0px'});
+  headings.forEach(h=>obs.observe(h));
+}
+
+/* Ajusta posicion inicial de la barra de progreso bajo el topbar */
+window.addEventListener('load', ()=>{
+  progressWrap.style.top = topbar.offsetHeight+'px';
+});
+
+/* ---------- Service worker ---------- */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>

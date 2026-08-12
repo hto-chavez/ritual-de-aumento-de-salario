@@ -1,0 +1,18 @@
+{
+  "name": "Ritual de Aumento de Salario — 2° Grado",
+  "short_name": "Aumento Salario",
+  "description": "Guión completo del ritual de Aumento de Salario (paso al 2° grado, Compañero) de la R∴L∴S∴ Hermes N.° 49.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#faf7f0",
+  "theme_color": "#141c3a",
+  "lang": "es-MX",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
